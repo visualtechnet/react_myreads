@@ -2,18 +2,10 @@ import React, { Component } from "react"
 import { Link } from "react-router-dom"
 import { ShelfOptions } from '../Lookups'
 
-export class BookListing extends Component {
-  constructor(props) {
-    super(props);
-    
-    this.onChangeShelf = this.onChangeShelf.bind(this)
-  }
-  
-  onChangeShelf = (event) => {
-  	console.log(event)
-  }
-
+export class BookListing extends Component {    
   renderShelfItems = (books, title) => {
+    const { onUpdateShelf } = this.props
+    
     if(books) {
       return (
         <div className="bookshelf">
@@ -34,7 +26,7 @@ export class BookListing extends Component {
                         }}
                       />
                       <div className="book-shelf-changer">
-                        <select value={book.shelf} onChange={this.onChangeShelf}>
+                        <select value={book.shelf} onChange={(event) => onUpdateShelf(book, event)}>
                           {
                               ShelfOptions.map((option, index) => {
                                   return (
@@ -52,7 +44,7 @@ export class BookListing extends Component {
                       {book.authors && book.authors.join(",")}
                     </div>
                   </div>
-                );
+                )
               })}
             </ol>
           </div>
@@ -88,6 +80,6 @@ export class BookListing extends Component {
 		  </div>	
         </div>
       </div>
-    );
+    )
   }
 }

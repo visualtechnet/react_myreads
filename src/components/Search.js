@@ -1,51 +1,66 @@
-import React, { PureComponent } from "react";
-import * as BooksAPI from "../BooksAPI";
-import { Link } from "react-router-dom";
-import { ShelfOptions } from "../Lookups";
-import debounce from "lodash/debounce";
+import React, { PureComponent } from "react"
+import * as BooksAPI from "../BooksAPI"
+import { Link } from "react-router-dom"
+import { ShelfOptions } from "../Lookups"
+import debounce from "lodash/debounce"
 
 export class Search extends PureComponent {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       searchTerm: "",
-      booksResult: []
-    };
+      booksResult: [],
+      isSearching: false,
+      message: ''
+    }
 
     this.handleSearch = this.handleSearch.bind(this)    
+    this.handleChangeShelf = this.handleChangeShelf.bind(this)
+  }
+  
+  handleChangeShelf = (book, event) =>{
+    const { onUpdateShelf } = this.props  
+    const { booksResult } = this.state
+    
+    onUpdateShelf(book,event)    
+    const updatedBooks = booksResult.map(currentBook => {      	      	
+    	return currentBook.id === book.id ? Object.assign({}, {...book}, { shelf: event.target.value }) : currentBook
+    })
+    this.setState({ booksResult: updatedBooks, message: `${book.title} shelf has been changed to ${event.target.value}` })
   }
    
   searchForBooks = () => {
     const { books } = this.props
-    BooksAPI.search(this.state.searchTerm, 100).then(foundBooks => {
-        const booksWithShelf = foundBooks && foundBooks.map((book,index) => {
+    this.setState({ isSearching: true })
+    BooksAPI.search(this.state.searchTerm, 500).then(foundBooks => {      
+        const booksWithShelf = foundBooks && !foundBooks.error && foundBooks.map((book,index) => {
         const shelfBook = books.find(d => d.id === book.id)      	
           return {
               ...book,
               shelf: shelfBook ? shelfBook.shelf : 'none'
           }
         })      
-      
+              
       this.setState({
-        booksResult: booksWithShelf && !booksWithShelf.error ? booksWithShelf : []
-      });
-    });
-  };
+        booksResult: booksWithShelf && !booksWithShelf.error ? booksWithShelf : [],
+        isSearching: false
+      })
+    })
+  }
 
   handleSearch = event => {
     const searchTermBook = debounce(this.searchForBooks, 500);
     this.setState({
       searchTerm: event.target.value
-    });
-    searchTermBook();
-  };
+    })
+    searchTermBook()
+  }
 
   renderBookResults = () => {
-    const { booksResult } = this.state;
-    const { onUpdateShelf } = this.props;
-
-    if (booksResult) {
+    const { booksResult, isSearching } = this.state;
+    
+    if (booksResult && booksResult.length > 0) {
       return (
         <ol className="books-grid">          
           { booksResult.map((book, index) => {        	
@@ -64,7 +79,7 @@ export class Search extends PureComponent {
                     >
                     </div>
                     <div className="book-shelf-changer">
-                      <select value={book.shelf} onChange={event => onUpdateShelf(book,event)}>
+                      <select value={book.shelf} onChange={event => this.handleChangeShelf(book,event)}>
                         {ShelfOptions.map((option, index) => {
                           return (<option
 							key={index}
@@ -79,20 +94,25 @@ export class Search extends PureComponent {
                   <div className="book-title"> {book.title} </div>
                   <div className="book-authors">                    
                     {book.authors && book.authors.join(",")}
-                  </div>
+                  </div>				  
                 </div>
               </li>
-            );
+            )
           })
          }
         </ol>
-      );
-    }
+      )
+    } 
+	
+	if(isSearching)
+    	return <p>Loading .....</p>
 
-    return <p>Loading .....</p>;
-  };
+	return null
+  }
 
   render() {
+	const { message } = this.state
+
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -106,8 +126,11 @@ export class Search extends PureComponent {
             />
           </div>
         </div>
-        <div className="search-books-results"> {this.renderBookResults()} </div>
+        <div className="search-books-results"> 
+			{ message && message.length > 0 && <div className="message"><b>{ message }</b></div> }
+			{this.renderBookResults()} 
+		</div>
       </div>
-    );
+    )
   }
 }

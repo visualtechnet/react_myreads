@@ -28,8 +28,22 @@ class BooksApp extends PureComponent {
   }
   
   onAddShelf = (book, event) => {
-  	BooksAPI.update(book, event.target.value).then(result => {
-    	console.log(result)
+    const { books } = this.state
+    
+  	BooksAPI.update(book, event.target.value).then(result => {            
+      const currentlyReading = books && books.filter(d => {        
+      	return result["currentlyReading"] && result["currentlyReading"].find(e => e === d.id)
+      })  
+            
+      const wantToRead = books && books.filter(d =>{
+      	return result["wantToRead"] && result["wantToRead"].find(e => e === d.id)
+      })
+      
+      const read = books && books.filter(d =>{
+      	return result["read"] && result["read"].find(e => e === d.id)
+      })
+            
+      this.setState({ currentlyReading, wantToRead, read })
     })    
   }
   
@@ -47,7 +61,8 @@ class BooksApp extends PureComponent {
       		  <Route exact path="/" render={() => <BookListing books={this.state.books} 
 					currentlyReading={this.state.currentlyReading} 
 					wantToRead={this.state.wantToRead} 
-					read={this.state.read} />}  />
+					read={this.state.read} 
+					onUpdateShelf={this.onAddShelf} />}  />
       		</Switch>
       	}
       	{

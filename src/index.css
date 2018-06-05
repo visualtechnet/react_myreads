@@ -9,14 +9,3 @@ body {
   padding: 0;
   font-family: 'Roboto', sans-serif;
 }
-
-.centered {
-  display: flex;
-  justify-content: center; 
-  align-items: center;
-}
-
-.container {
-	min-width: 960px;
-  	min-height: 400px;
-}

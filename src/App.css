@@ -8,6 +8,27 @@ body, .app {
   background: white;
 }
 
+
+.centered {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+}
+
+.container {
+	min-width: 960px;
+  	min-height: 400px;
+}
+
+.message {
+	color: #000;
+  	background-color: yellow;
+  	padding: 10px;
+  	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* main page */
 
 .list-books-title {
