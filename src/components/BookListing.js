@@ -1,22 +1,39 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { Search } from '../components' 
+import * as BooksAPI from '../BooksAPI'
 
 export class BookListing extends Component {
     constructor(props) {
       super(props)
       
       this.state = {
-      	showSearchPage: false
+      	currentlyReading: [],
+        wantToRead: [],
+        read: []
       }
     }
   
+  	componentDidMount() {
+    	BooksAPI.getAll().then(result => {
+        	if(result){
+              const currentlyReading = result.filter(d => d.shelf === "currentlyReading")
+              const wantToRead = result.filter(d => d.shelf === "wantToRead")
+              const read = result.filter(d => d.shelf === "read")
+              
+              this.setState({ currentlyReading, wantToRead, read })
+            }          
+        })
+    }
+  
+  	renderShelfItems = () => {
+    	
+    }
+  
   	render() {
-      const { showSearchPage } = this.state
-      
+      const { currentlyReading, wantToRead, read } = this.state
       return (
-        <div>
-          { showSearchPage ? <Search /> : (
+        <div>          
           <div className="list-books">
             <div className="list-books-title">
               <h1>MyReads</h1>
@@ -176,7 +193,6 @@ export class BookListing extends Component {
 			  <Link to="/search">Add a book</Link>	
             </div>
           </div>
-        )}
       	</div>
 	  )
     }
