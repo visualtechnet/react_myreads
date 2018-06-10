@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Search.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Search.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { PureComponent } from "react"
+import PropTypes from 'prop-types'
+import * as BooksAPI from "../BooksAPI"
+import { Link } from "react-router-dom"
+import { ShelfOptions } from "../Lookups"
+import debounce from "lodash/debounce"
+
+export class Search extends PureComponent {
+  static propTypes = {
+    books: PropTypes.array,
+    onUpdateShelf: PropTypes.func.isRequired
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      searchTerm: "",
+      booksResult: [],
+      isSearching: false,
+      message: ''
+    }
+
+    this.handleSearch = this.handleSearch.bind(this)    
+    this.handleChangeShelf = this.handleChangeShelf.bind(this)
+  }
+  
+/** 
+ * Change the shelf of the book
+ * @param {object} book - the item to update/mutate
+ * @param {object} event - event object 
+*/
+  handleChangeShelf = (book, event) =>{
+    const { onUpdateShelf } = this.props  
+    const { booksResult } = this.state
+    
+    onUpdateShelf(book,event)    
+    const updatedBooks = booksResult.map(currentBook => {      	      	
+    	return currentBook.id === book.id ? Object.assign({}, {...book}, { shelf: event.target.value }) : currentBook
+    })
+    this.setState({ booksResult: updatedBooks, message: `${book.title} shelf has been changed to ${event.target.value}` })
+  }
+   
+/** 
+ * Search for the book. Get the search term from the state.searchTerm.  
+ */
+  searchForBooks = () => {
+    const { books } = this.props
+    this.setState({ isSearching: true })
+    BooksAPI.search(this.state.searchTerm, 500).then(foundBooks => {      
+        const booksWithShelf = foundBooks &amp;&amp; !foundBooks.error &amp;&amp; foundBooks.map((book,index) => {
+        const shelfBook = books.find(d => d.id === book.id)      	
+          return {
+              ...book,
+              shelf: shelfBook ? shelfBook.shelf : 'none'
+          }
+        })      
+              
+      this.setState({
+        booksResult: booksWithShelf &amp;&amp; !booksWithShelf.error ? booksWithShelf : [],
+        isSearching: false
+      })
+    })
+  }
+
+/** 
+ * Search Handler. Uses debounce to half a second to delay fetching
+ * @param {object} event - event object 
+ */
+  handleSearch = event => {
+    const searchTermBook = debounce(this.searchForBooks, 500);
+    this.setState({
+      searchTerm: event.target.value
+    })
+    searchTermBook()
+  }
+
+/** 
+ * Renders a list of books depending on the result of the search. This also sets the loading state of the search.
+ */
+  renderBookResults = () => {
+    const { booksResult, isSearching } = this.state;
+    
+    if (booksResult &amp;&amp; booksResult.length > 0) {
+      return (
+        &lt;ol className="books-grid">          
+          { booksResult.map((book, index) => {        	
+            const bgImage = `url("${book.imageLinks.thumbnail}")`;
+            return (
+              &lt;li key={book.id}>
+                &lt;div className="book">
+                  &lt;div className="book-top">
+                    &lt;div
+                      className="book-cover"
+                      style={{
+                        width: 128,
+                        height: 193,
+                        backgroundImage: `${bgImage}`
+                      }}
+                    >
+                    &lt;/div>
+                    &lt;div className="book-shelf-changer">
+                      &lt;select value={book.shelf} onChange={event => this.handleChangeShelf(book,event)}>
+                        {ShelfOptions.map((option, index) => {
+                          return (&lt;option
+							key={index}
+                            value={option.value}
+                            disabled={option.value === "movedTo"}
+                          >{option.text}
+                          &lt;/option>)
+                        })}
+                      &lt;/select>
+                    &lt;/div>
+                  &lt;/div>
+                  &lt;div className="book-title"> {book.title} &lt;/div>
+                  &lt;div className="book-authors">                    
+                    {book.authors &amp;&amp; book.authors.join(",")}
+                  &lt;/div>				  
+                &lt;/div>
+              &lt;/li>
+            )
+          })
+         }
+        &lt;/ol>
+      )
+    } 
+	
+	if(isSearching)
+    	return &lt;p>Loading .....&lt;/p>
+
+	return null
+  }
+
+  render() {
+	const { message } = this.state
+
+    return (
+      &lt;div className="search-books">
+        &lt;div className="search-books-bar">
+          &lt;Link className="close-search" to="/">Close&lt;/Link>
+          &lt;div className="search-books-input-wrapper">
+            &lt;input
+              type="text"
+              placeholder="Search by title or author"
+              value={this.state.searchTerm}
+              onChange={this.handleSearch}
+            />
+          &lt;/div>
+        &lt;/div>
+        &lt;div className="search-books-results"> 
+			{ message &amp;&amp; message.length > 0 &amp;&amp; &lt;div className="message">&lt;b>{ message }&lt;/b>&lt;/div> }
+			{this.renderBookResults()} 
+		&lt;/div>
+      &lt;/div>
+    )
+  }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jun 10 2018 21:17:05 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

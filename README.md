@@ -4,14 +4,6 @@ PROJECT SUMMARY: This project is all about listing and keeping track of the book
 
 This is the starter template for the final assessment project for Udacity's React Fundamentals course. 
 
-## INSTALLATION INSTRUCTIONS
-
-Clone the project from this Github then install node modules and run the project. See below for a step by step instructions.
-
-1. git clone https://github.com/visualtechnet/react_myreads.git
-2. npm i
-3. npm start
-
 ## EXPECTED OUTPUT
 Listing Page
 1. User should expect a list of books from each category. Each should be pulled from the existing API provided in the project. See Backend Server below for more info.
@@ -23,12 +15,15 @@ Search Page
 2. User should be able to add the book to a particular shelf category.
 3. Ensure that the correct category is selected from the category option of the book. This will let the user know if the user is already part of a shelf.
 
-## TL;DR
+## INSTALLATION INSTRUCTIONS
 
 To get started developing right away:
 
-* install all project dependencies with `npm install`
-* start the development server with `npm start`
+Clone the project from this Github then install node modules and run the project. See below for a step by step instructions.
+
+1. git clone https://github.com/visualtechnet/react_myreads.git
+2. npm i
+3. npm start
 
 ## What You're Getting
 ```bash
@@ -39,10 +34,15 @@ To get started developing right away:
 │   ├── favicon.ico # React Icon, You may change if you wish.
 │   └── index.html # DO NOT MODIFY
 └── src
+	├── components
+    │   ├── BookListing.js # Contains rendering of Shelf Items and its list of books.
+    │   ├── Search.js # Main JS file used to handle all the search logic
+    │   ├── index.js # Used for exporting files
     ├── App.css # Styles for your app. Feel free to customize this as you desire.
     ├── App.js # This is the root of your app. Contains static HTML right now.
     ├── App.test.js # Used for testing. Provided with Create React App. Testing is encouraged, but not required.
     ├── BooksAPI.js # A JavaScript API for the provided Udacity backend. Instructions for the methods are below.
+    ├── Lookups.js # Exposes an array of items such as Shelf Options to be used as lookups values for Select inputs.
     ├── icons # Helpful images for your app. Use at your discretion.
     │   ├── add.svg
     │   ├── arrow-back.svg
@@ -52,6 +52,12 @@ To get started developing right away:
 ```
 
 Remember that good React design practice is to create new JS files for each component and use import/require statements to include them where they are needed.
+
+## DEPENDENCIES
+- [Lodash](https://lodash.com/) - used Debounce for Searching
+- [JSDoc](https://github.com/jsdoc3/jsdoc) - used for generating documentation
+  -- To generate documentation, run the command
+  	npm run documentation
 
 ## Backend Server
 
