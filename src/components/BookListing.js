@@ -1,8 +1,21 @@
 import React, { Component } from "react"
+import PropTypes from 'prop-types'
 import { Link } from "react-router-dom"
 import { ShelfOptions } from '../Lookups'
 
 export class BookListing extends Component {    
+  static propTypes = {
+    onUpdateShelf: PropTypes.func.isRequired,
+    currentlyReading: PropTypes.array,
+    wantToRead: PropTypes.array,
+    read: PropTypes.array
+  }
+
+/** 
+ * Render List of books for each shelf. Contains list of shelf options to update the shelf
+ * @param {array} books - list of books
+ * @param {string} title - title of the Shelf
+*/
   renderShelfItems = (books, title) => {
     const { onUpdateShelf } = this.props
     

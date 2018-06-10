@@ -1,10 +1,16 @@
 import React, { PureComponent } from "react"
+import PropTypes from 'prop-types'
 import * as BooksAPI from "../BooksAPI"
 import { Link } from "react-router-dom"
 import { ShelfOptions } from "../Lookups"
 import debounce from "lodash/debounce"
 
 export class Search extends PureComponent {
+  static propTypes = {
+    books: PropTypes.array,
+    onUpdateShelf: PropTypes.func.isRequired
+  }
+
   constructor(props) {
     super(props)
 
@@ -19,6 +25,11 @@ export class Search extends PureComponent {
     this.handleChangeShelf = this.handleChangeShelf.bind(this)
   }
   
+/** 
+ * Change the shelf of the book
+ * @param {object} book - the item to update/mutate
+ * @param {object} event - event object 
+*/
   handleChangeShelf = (book, event) =>{
     const { onUpdateShelf } = this.props  
     const { booksResult } = this.state
@@ -30,6 +41,9 @@ export class Search extends PureComponent {
     this.setState({ booksResult: updatedBooks, message: `${book.title} shelf has been changed to ${event.target.value}` })
   }
    
+/** 
+ * Search for the book. Get the search term from the state.searchTerm.  
+ */
   searchForBooks = () => {
     const { books } = this.props
     this.setState({ isSearching: true })
@@ -49,6 +63,10 @@ export class Search extends PureComponent {
     })
   }
 
+/** 
+ * Search Handler. Uses debounce to half a second to delay fetching
+ * @param {object} event - event object 
+ */
   handleSearch = event => {
     const searchTermBook = debounce(this.searchForBooks, 500);
     this.setState({
@@ -57,6 +75,9 @@ export class Search extends PureComponent {
     searchTermBook()
   }
 
+/** 
+ * Renders a list of books depending on the result of the search. This also sets the loading state of the search.
+ */
   renderBookResults = () => {
     const { booksResult, isSearching } = this.state;
     

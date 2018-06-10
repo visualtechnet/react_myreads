@@ -1,8 +1,27 @@
 # MyReads Project
 
-This is the starter template for the final assessment project for Udacity's React Fundamentals course. The goal of this template is to save you time by providing a static example of the CSS and HTML markup that may be used, but without any of the React code that is needed to complete the project. If you choose to start with this template, your job will be to add interactivity to the app by refactoring the static code in this template.
+PROJECT SUMMARY: This project is all about listing and keeping track of the books that the user have been reading. Each book is categorized by the user according to what the user is currently reading, suggested reads (Want To Read) or have completed reading(Read). There is a search feature in that will allow the user to search a book from a list of books that is retrieve from a database through an API. User should be able to add a book to a particular book category (shelve) from the Search screen or even the Listing page.
 
-Of course, you are free to start this project from scratch if you wish! Just be sure to use [Create React App](https://github.com/facebookincubator/create-react-app) to bootstrap the project.
+This is the starter template for the final assessment project for Udacity's React Fundamentals course. 
+
+## INSTALLATION INSTRUCTIONS
+
+Clone the project from this Github then install node modules and run the project. See below for a step by step instructions.
+
+1. git clone https://github.com/visualtechnet/react_myreads.git
+2. npm i
+3. npm start
+
+## EXPECTED OUTPUT
+Listing Page
+1. User should expect a list of books from each category. Each should be pulled from the existing API provided in the project. See Backend Server below for more info.
+2. User should be able to assign book to a different category by selecting category (green down arrow) for each book. This event will refresh the page and reflect that the book has actually moved to a different shelf category.
+3. Initial listing contains 3 books as described in the specification
+
+Search Page
+1. User should be able to search a book from the Search input textbox. List of book results will be displayed after it has completed getting the results from the API. Queries is already filtered by term and restrictions do apply. Allowed search terms are included in the project.
+2. User should be able to add the book to a particular shelf category.
+3. Ensure that the correct category is selected from the category option of the book. This will let the user know if the user is already part of a shelf.
 
 ## TL;DR
 
